@@ -21,8 +21,11 @@ class MicroWave {
         case medium // 600ワット
         case strong // 800ワット
     }
+    // タイマーをセットするための変数
+    var minutes: Int = 0
+    var seconds: Int = 0
     
-    // 任意の箇所でTimerクラスを使用して１秒毎にcountup()メソッドを実行させるタイマーをセット
+    // 任意の箇所でTimerクラスを使用して１秒毎にstartWarming()メソッドを実行させるタイマーをセット
     func start() {
         timer = Timer.scheduledTimer(
             timeInterval: 1, // タイマーの実行間隔を指定（単位はn秒）
@@ -34,18 +37,26 @@ class MicroWave {
     }
     
     @objc func startWarming() {
-        
-        switch WattageType {
-        case .weak:
-            break
-        case .medium:
-            break
-        case .strong:
-            break
+        // 1秒ずつ減らす
+        seconds -= 1
+        print("残り\(microWave.minutes)分\(microWave.seconds)秒")
+        // 1分を60秒に変換する
+        if seconds <= -1 && minutes > 0 {
+            minutes -= 1
+            seconds = 60
         }
-        
+        // タイマーの数値が0になった時
+        if minutes == 0 && seconds == 0 {
+            // タイマーを止める
+            timer?.invalidate()
+            print("温めが終了しました。")
+        }
     }
     
     
-    
 }
+
+let microWave = MicroWave()
+microWave.minutes = 1
+microWave.seconds = 0
+microWave.start()

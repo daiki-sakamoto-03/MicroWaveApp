@@ -13,8 +13,6 @@ PlaygroundPage.current.needsIndefiniteExecution = true
 class MicroWave {
     
     var timer: Timer?
-    let limit = 0
-    var warmLimit = 0
     
     enum WattageType {
         case weak // 500ワット
@@ -25,8 +23,10 @@ class MicroWave {
     var minutes: Int = 0
     var seconds: Int = 0
     
+    var wattageType: WattageType = .weak
+    
     // 任意の箇所でTimerクラスを使用して１秒毎にstartWarming()メソッドを実行させるタイマーをセット
-    func start() {
+    func start(w: WattageType) {
         timer = Timer.scheduledTimer(
             timeInterval: 1, // タイマーの実行間隔を指定（単位はn秒）
             target: self, // ここは「self」でOK
@@ -34,6 +34,17 @@ class MicroWave {
             userInfo: nil, // ここは「nil」でOK
             repeats: true // 繰り返し処理を実行したいので「true」を指定
         )
+        
+        // ワット数を開始時に表示
+        switch wattageType {
+        case .weak:
+            print("500Wで温めます！")
+        case .medium:
+            print("600Wで温めます！")
+        case .strong:
+            print("800Wで温めます！")
+        }
+        
     }
     
     @objc func startWarming() {
@@ -41,7 +52,7 @@ class MicroWave {
         seconds -= 1
         print("残り\(microWave.minutes)分\(microWave.seconds)秒")
         // 1分を60秒に変換する
-        if seconds <= -1 && minutes > 0 {
+        if seconds <= 0 && minutes > 0 {
             minutes -= 1
             seconds = 60
         }
@@ -52,11 +63,10 @@ class MicroWave {
             print("温めが終了しました。")
         }
     }
-    
-    
 }
 
 let microWave = MicroWave()
 microWave.minutes = 1
-microWave.seconds = 0
-microWave.start()
+microWave.seconds = 10
+microWave.wattageType = .medium
+microWave.start(w: .medium)

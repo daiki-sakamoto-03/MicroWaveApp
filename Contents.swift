@@ -14,6 +14,12 @@ class MicroWave {
     
     var timer: Timer?
     
+    init(min: Int, sec: Int, wattageType: WattageType) {
+        self.minutes = min
+        self.seconds = sec
+        self.wattageType = wattageType
+    }
+    
     enum WattageType {
         case weak // 500ワット
         case medium // 600ワット
@@ -26,7 +32,7 @@ class MicroWave {
     var wattageType: WattageType = .weak
     
     // 任意の箇所でTimerクラスを使用して１秒毎にstartWarming()メソッドを実行させるタイマーをセット
-    func start(w: WattageType) {
+    func start() {
         timer = Timer.scheduledTimer(
             timeInterval: 1, // タイマーの実行間隔を指定（単位はn秒）
             target: self, // ここは「self」でOK
@@ -34,6 +40,13 @@ class MicroWave {
             userInfo: nil, // ここは「nil」でOK
             repeats: true // 繰り返し処理を実行したいので「true」を指定
         )
+        
+        // 例外ケース！　0以下を入力された場合の処理
+        guard minutes > 0 || seconds > 0 else {
+            timer?.invalidate()
+            print("正しく入力してください！")
+            return
+        }
         
         // ワット数を開始時に表示
         switch wattageType {
@@ -65,8 +78,5 @@ class MicroWave {
     }
 }
 
-let microWave = MicroWave()
-microWave.minutes = 1
-microWave.seconds = 10
-microWave.wattageType = .medium
-microWave.start(w: .medium)
+let microWave = MicroWave(min: 0, sec: 0, wattageType: .weak)
+microWave.start()
